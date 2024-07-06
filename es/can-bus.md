@@ -1,4 +1,4 @@
-# es - can-bus
+# es::can-bus
 
 ## was ist ein can bus?
 

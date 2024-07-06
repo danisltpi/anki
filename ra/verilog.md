@@ -153,3 +153,59 @@ endmodule
 ## how to map types of verilog to systemverilog
 
 wire / reg -> logic
+
+## combinational vs sequential circuits
+
+- combinational:
+
+  - have no memory
+  - depend only on current input values to produce output
+  - don't have clock input bc they don't require trigger
+
+- sequential:
+  - have memory
+  - depend on both current inputs and previously stored state
+
+## contamination delay
+
+- minimum delay
+- fastest possible signal propagation
+- the time between the input change and the output change
+
+## propagation delay
+
+- maximum delay
+- time between the input change and when the output reaches its final stable value
+
+## synchronous
+
+- clock is used
+
+## asynchronous
+
+- no global clock
+- event driven
+
+## D Latch
+
+![](2024-07-07-01-21-19.png)
+
+## $t_{ccq}$ / $t_{pcq}$
+
+clock-to-q delay (contamination/propagation) at flip-flop
+
+## $t_{cd}$ / $t_{pd}$
+
+combinational logic delay (contamination/propagation)
+
+## $t_{setup}$
+
+time that flip-flop inputs must be stable before next clock edge
+
+## $t_{hold}$
+
+time that flip-flop inputs must be stable after a clock edge
+
+## $T_c$
+
+clock period

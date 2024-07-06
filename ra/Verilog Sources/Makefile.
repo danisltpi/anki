@@ -1,0 +1,37 @@
+CC = /c/iverilog/bin/iverilog 
+#FLAGS = ­Wall 
+VVP="/c/iverilog/bin/vvp"
+GTKWAVE="/c/iverilog/gtkwave/bin/gtkwave"
+YOSYS="/c/Program Files (x86)/yosys/yosys-win32-mxebin-0.9/yosys.exe"
+ACRORD=/c/Program\ Files/Adobe/Acrobat\ DC/Acrobat/Acrobat.exe
+
+all: mux_gate_level_v mux_gate_level_sv
+
+mux_gate_level_v: mux_gate_level.v mux_gate_level_tb.v
+	$(CC) $(FLAGS) -o mux_gate_level_v mux_gate_level.v mux_gate_level_tb.v
+	$(VVP) mux_gate_level_v
+	$(GTKWAVE) mux_gate_level_v.vcd &
+	$(YOSYS) -o mux_gate_level_synth_v.edif -b edif -p hierarchy -p proc -p opt -p memory -p opt \
+	         -p fsm -p opt -p "show -colors 1 -format pdf -prefix mux_gate_level_v" mux_gate_level.v 2>&1
+	$(ACRORD) mux_gate_level_v.pdf &
+
+mux_gate_level_sv: mux_gate_level.sv mux_gate_level_tb.sv
+	$(CC) $(FLAGS) -g2012 -o mux_gate_level_sv mux_gate_level.sv mux_gate_level_tb.sv
+	$(VVP) mux_gate_level_sv
+	$(GTKWAVE) mux_gate_level_sv.vcd &
+	$(YOSYS) -o mux_gate_level_synth_sv.edif -b edif -p hierarchy -p proc -p opt -p memory -p opt \
+	         -p fsm -p opt -p "show -colors 1 -format pdf -prefix mux_gate_level_sv" mux_gate_level.sv 2>&1
+	$(ACRORD) mux_gate_level_sv.pdf &
+
+
+clean:
+	rm -rf mux_gate_level_v mux_gate_level_v.vcd mux_gate_level_v.dot mux_gate_level_v.pdf mux_gate_level_synth_v.edif \
+	       mux_gate_level_sv mux_gate_level_sv.vcd mux_gate_level_sv.dot mux_gate_level_sv.pdf mux_gate_level_synth_sv.edif
+
+
+#
+# Alternative way to call yosys for system verilog:
+#
+#$(YOSYS) -o mux_gate_level_synth_sv.edif -f verilog -b edif -p "read_verilog -sv mux_gate_level.sv" -p hierarchy -p proc -p opt -p memory -p opt \
+#         -p fsm -p opt -p "show -colors 1 -format pdf -prefix mux_gate_level_sv" 2>&1
+

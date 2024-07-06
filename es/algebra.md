@@ -1,4 +1,4 @@
-# es - algebra
+# es::algebra
 
 ## (halb)gruppe
 

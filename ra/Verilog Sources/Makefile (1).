@@ -1,0 +1,46 @@
+CC = /c/iverilog/bin/iverilog
+#CC=/usr/local/bin/iverilog
+VVP="/c/iverilog/bin/vvp"
+#VVP=/usr/local/bin/vvp
+GTKWAVE="/c/iverilog/gtkwave/bin/gtkwave"
+#GTKWAVE=/usr/bin/gtkwave
+YOSYS="/c/Program Files (x86)/yosys/yosys-win32-mxebin-0.9/yosys.exe"
+#YOSYS="/usr/local/bin/yosys"
+ACRORD=/c/Program\ Files/Adobe/Acrobat\ DC/Acrobat/Acrobat.exe
+#ACRORD=/usr/bin/xdg-open
+
+
+all: mux_always_v mux_always_sv
+
+mux_always_v: mux_always.v mux_always_tb.v
+	$(CC) -o mux_always_v mux_always.v mux_always_tb.v
+	$(VVP) mux_always_v
+	$(GTKWAVE) mux_always_v.vcd &
+	$(YOSYS) -o mux_always_synth_v.edif -b edif -p hierarchy -p proc -p opt -p memory -p opt \
+	         -p fsm -p opt  mux_always.v 2>&1
+#	$(YOSYS) -p "read_verilog mux_always.v" -p "prep; show -stretch -prefix mux_always_v -format pdf" mux_always.v
+	$(YOSYS) -p "prep; show -stretch -prefix mux_always_v -format pdf" mux_always.v
+	$(ACRORD) mux_always_v.pdf &
+
+mux_always_sv: mux_always.sv mux_always_tb.sv
+	$(CC) -g2012 -o mux_always_sv mux_always.sv mux_always_tb.sv
+	$(VVP) mux_always_sv
+	$(GTKWAVE) mux_always_sv.vcd &
+	$(YOSYS) -o mux_always_synth_sv.edif -b edif -p hierarchy -p proc -p opt -p memory -p opt \
+	         -p fsm -p opt mux_always.sv 2>&1
+#	$(YOSYS) -p "read_verilog -sv mux_always.sv" -p "prep; show -stretch -prefix mux_always_sv -format pdf" mux_always.sv
+	$(YOSYS) -p "prep; show -stretch -prefix mux_always_sv -format pdf" mux_always.sv
+	$(ACRORD) mux_always_sv.pdf &
+
+
+clean:
+	rm -rf mux_always_v mux_always_v.vcd mux_always_v.dot mux_always_v.pdf mux_always_synth_v.edif \
+	       mux_always_sv mux_always_sv.vcd mux_always_sv.dot mux_always_sv.pdf mux_always_synth_sv.edif
+
+
+#
+# Alternative way to call yosys for system verilog:
+#
+#$(YOSYS) -o mux_always_synth_sv.edif -f verilog -b edif -p "read_verilog -sv mux_always.sv" -p hierarchy -p proc -p opt -p memory -p opt \
+#         -p fsm -p opt -p "show -colors 1 -format pdf -prefix mux_always_sv" 2>&1
+
