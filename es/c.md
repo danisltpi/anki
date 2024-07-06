@@ -50,3 +50,17 @@ fp = (void(*)())0xff;
 - intel x86
 - vax
 - dec alpha
+
+## welche byte anordnung verwendet internet
+
+- network byte order (also big endian)
+
+## htons()
+
+- host format to network format short
+- kovertiert 16 bit werte von host format zu big endian
+
+## ntohs()
+
+- network format to host format short
+- kovertiert 16 bit werte von big endian in das host format
