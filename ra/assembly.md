@@ -140,3 +140,7 @@ str x23, [sp, #48]
 - X30
 - store return address
 - e.g. when using bl, the address of the next instruction is stored there
+
+## critical path
+
+- longest path through logic
