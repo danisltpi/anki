@@ -2,26 +2,56 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
-func main() {
-    var x int
-    y := make(chan int, 1)
+func detected() {
 
-    // T2
+    x := 1
+    var m sync.RWMutex
+
     go func() {
-        y <- 1
-        x++
-        <-y
+        x = 2
+        m.Lock()
+        m.Unlock()
 
     }()
 
-    x++
-    y <- 1
-    <-y
+    m.Lock()
+    x = 3
+    m.Unlock()
 
-    time.Sleep(1 * 1e9)
-    fmt.Printf("done \n" + fmt.Sprintf("%d", x) + "\n");
+    fmt.Printf("%d", x)
+    time.Sleep(1 * time.Second)
+}
+
+// false negative
+// because critical sections are not reordered
+func notDetected() {
+
+    x := 1
+    var m sync.RWMutex
+
+    go func() {
+        x = 2
+        m.Lock()
+        m.Unlock()
+
+    }()
+
+    time.Sleep(1 * time.Second)
+
+    m.Lock()
+    x = 3
+    m.Unlock()
+
+    fmt.Printf("%d", x)
+
+}
+
+func main() {
+    detected()
+    notDetected()
 
 }
