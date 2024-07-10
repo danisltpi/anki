@@ -124,8 +124,58 @@ the lockset of e consists of all y's where e appears (in y's critical section)
 ## lock dependency
 
 - D = (id, l, ls)
+- id: thread
+- l: welches lock will ich?
+- ls: welche locks habe ich bereits?
 
 ## lock dependency state variables
 
 - ls(t): the set of locks held by a thread t at a certain time
 - Ds: the set of lock dependencies
+
+## go style mutexes behavior
+
+- they behave like semaphores, so a thread can release a lock that was acquired by a different thread
+
+## deadlock prediction via lockgraph
+
+- results in further false positives
+
+## cycle check via lock dependencies
+
+A deadlock is issued if there is a cyclic lock dependency chain D_1...D_n
+where each D_i is from a distinct thread and:
+
+- LD-1: {Ls_i} cap {Ls_j} = {} where i != j
+
+  - locksets are disjoint e.g. {L1} cap {L2} = {}
+
+- LD-2: l_i \in ls_i+1 for i=1,...,n-1
+
+  - if lock is in the lockset of the next lock dependency of another thread e.g. L2 in {L2}
+
+- LD-3: l_n \in ls_1
+  - if the last lock is in the lockset of the first lock dependency e.g. L1 in {L1}
+
+## warum liefert lock graph false positives
+
+- es wird nicht zwischen versch. threads unterschieden
+- guard locks
+
+## wann liefern lock dependencies false positives
+
+- lock dependencies können write read dependencies missachten
+- man kann per reordering den trace dann nicht nachstellen da es sonst write read violatet
+
+## wann liefern lock dependencies false negatives
+
+- wegen cross thread critical section
+- wenn mittendrin noch ein fork passiert
+
+![](2024-07-10-14-30-14.png)
+
+- es wird deadlock reported aber man kann per reordering
+
+![](2024-07-10-14-33-38.png)
+
+![](2024-07-10-14-33-25.png)
