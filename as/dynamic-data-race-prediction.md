@@ -22,10 +22,11 @@ means that all valid reorderings that exhibit some race can be predicted. If inc
 ## happens-before
 
 - incomplete: it might not identify all possible races
+- unsound
 
 ## lockset
 
-- unsound: it
+- unsound
 
 ## j#e_i notation
 
@@ -74,3 +75,57 @@ Partial order that meets the following conditions:
 - fasttrack with some optimizations
 - dynamic race detection with llvm compiler
 - go race detector is built on top of it
+
+## Lockset data race check
+
+- if two conflicting events share the same lock y then they belong to two different critical sections
+- so they cannot be in a data race since critical sections are mutually exclusive
+- if the lockset of two conflicting events are disjoint then they are a data race pair
+
+## CS(i#acq(y)\_k, i#rel(y)\_j)
+
+- to denote the set of events that are part of the critical section
+
+## LS(e)
+
+the lockset of e consists of all y's where e appears (in y's critical section)
+
+## why is lockset unsound
+
+- ignores write-read dependency
+- allows to reorder critical sections
+
+## efficient methods for dynamic data race prediction
+
+- underapproximate
+  - considers only certain reorderings
+  - e.g. HB
+  - generally no false positive but false negatives!
+- overapproximate
+  - considers possibly too many reorderings
+  - e.g. lockset
+  - generally no false negatives but false positives
+
+## resource deadlock
+
+- a set of threads blocked
+- each thread is waiting for a lock held by another thread in the set
+
+## lock graph
+
+- locks are nodes
+- edge from lock x to lock y if the thread holds lock x and acquires lock y
+- if there is a cycle then there is a potential deadlock
+
+## guard locks
+
+- are there to protect thread from deadlocks if there is a cyclic lock graph without it
+
+## lock dependency
+
+- D = (id, l, ls)
+
+## lock dependency state variables
+
+- ls(t): the set of locks held by a thread t at a certain time
+- Ds: the set of lock dependencies
